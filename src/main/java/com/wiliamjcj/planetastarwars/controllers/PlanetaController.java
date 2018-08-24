@@ -43,10 +43,10 @@ public class PlanetaController {
 
 	@ApiOperation(value = "Adiciona um novo planeta, com nome, clima e terreno, retornando no header a sua localização.")
 	@PostMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<APIResponse<String>> adicionarPlaneta(@Valid @RequestBody PlanetaDTO planeta,
+	public ResponseEntity<APIResponse<PlanetaDTO>> adicionarPlaneta(@Valid @RequestBody PlanetaDTO planeta,
 			BindingResult res) {
 		try {
-			APIResponse<String> apiResponse = new APIResponse<String>();
+			APIResponse<PlanetaDTO> apiResponse = new APIResponse<PlanetaDTO>();
 
 			if (res.hasErrors()) {
 				res.getAllErrors().stream().forEach(err -> apiResponse.getErrors().add(err.getDefaultMessage()));
@@ -55,6 +55,7 @@ public class PlanetaController {
 			planeta.setId(null);
 			planeta = planetaService.criarPlaneta(planeta);
 			URI location = new URI(BASE_ENDPOINT + "/" + planeta.getId());
+			apiResponse.setData(planeta);
 
 			return ResponseEntity.created(location).body(apiResponse);
 		} catch (Exception e) {
@@ -76,6 +77,10 @@ public class PlanetaController {
 				planetas = planetaService.buscarPlanetas(nome);
 			}
 
+			if(null == planetas || planetas.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			}
+			
 			APIResponse<List<PlanetaDTO>> apiResponse = new APIResponse<List<PlanetaDTO>>();
 			apiResponse.setData(planetas);
 			return ResponseEntity.ok(apiResponse);
@@ -86,7 +91,7 @@ public class PlanetaController {
 
 	@ApiOperation(value = "Busca um planeta por id.")
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<Object> buscarPlaneta(@PathVariable(name = "id", required = true) String id) {
+	public ResponseEntity<APIResponse<PlanetaDTO>> buscarPlaneta(@PathVariable(name = "id", required = true) String id) {
 		try {
 			APIResponse<PlanetaDTO> apiResponse = new APIResponse<PlanetaDTO>();
 			PlanetaDTO planeta = planetaService.buscarPlanetaPorId(id);
@@ -118,9 +123,7 @@ public class PlanetaController {
 				planetaService.deletarPlaneta(planeta);
 				return ResponseEntity.ok(apiResponse);
 			} else {
-				apiResponse.getErrors()
-						.add("Não foi possível remover o planeta, pois não foi encontrado planeta com o id: " + id);
-				return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(apiResponse);
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
