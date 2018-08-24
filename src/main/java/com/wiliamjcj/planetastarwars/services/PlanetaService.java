@@ -3,6 +3,7 @@ package com.wiliamjcj.planetastarwars.services;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -93,5 +94,13 @@ public class PlanetaService {
 		}.getType();
 		List<PlanetaDTO> planetasDTO = (List<PlanetaDTO>) mapper.map(planetas, tipo);
 		return planetasDTO;
+	}
+
+	public PlanetaDTO buscarPlanetaPorId(String id) {
+		Optional<Planeta> planeta = planetaRepository.findById(id);
+		if (planeta.isPresent())
+			return (PlanetaDTO) mapper.map(planeta.get(), PlanetaDTO.class);
+		else
+			return new PlanetaDTO();
 	}
 }

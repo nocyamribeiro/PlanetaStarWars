@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,6 +79,26 @@ public class PlanetaController {
 			apiResponse.setData(planetas);
 			return ResponseEntity.ok(apiResponse);
 		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@ApiOperation(value = "Busca um planeta por id.")
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<Object> buscarPlaneta(@PathVariable(name = "id", required = true) String id) {
+		try {
+			APIResponse<PlanetaDTO> apiResponse = new APIResponse<PlanetaDTO>();
+			PlanetaDTO planeta = planetaService.buscarPlanetaPorId(id);
+			apiResponse.setData(planeta);
+
+			if (null != planeta.getId()) {
+				return ResponseEntity.ok(apiResponse);
+			} else {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			log.debug(e.getStackTrace().toString());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
