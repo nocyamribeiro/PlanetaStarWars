@@ -43,17 +43,17 @@ public class PlanetaService {
 	private String swapiURI;
 
 	public PlanetaDTO criarPlaneta(PlanetaDTO dto) {
-		Planeta planeta = (Planeta) mapper.map(dto, Planeta.class);
+		Planeta planeta = (Planeta) mapper.mapPlanetaDTOToPlaneta(dto);
 
 		Integer qtdAparicoesFilmes = buscarPlanetaSWAPI(planeta.getNome());
 		planeta.setQtdAparicoesFilmes(qtdAparicoesFilmes);
 
 		planeta = planetaRepository.save(planeta);
 
-		return (PlanetaDTO) mapper.map(planeta, PlanetaDTO.class);
+		return (PlanetaDTO) mapper.mapPlanetaToPlanetaDTO(planeta);
 	}
 
-	private Integer buscarPlanetaSWAPI(String nome) {
+	public Integer buscarPlanetaSWAPI(String nome) {
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			HttpHeaders headers = new HttpHeaders();
@@ -103,9 +103,10 @@ public class PlanetaService {
 		else
 			return new PlanetaDTO();
 	}
-	
+
 	public void deletarPlaneta(PlanetaDTO dto) {
 		Planeta planeta = (Planeta) mapper.map(dto, Planeta.class);
 		planetaRepository.delete(planeta);
 	}
+
 }
