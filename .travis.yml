@@ -5,3 +5,8 @@ before_install:
  
 jdk:
   - oraclejdk8
+
+deploy:
+  provider: heroku
+  api_key: dc655cca-4e96-4ec0-a870-c704eed3e175
+  app: planetastarwarsapi  
