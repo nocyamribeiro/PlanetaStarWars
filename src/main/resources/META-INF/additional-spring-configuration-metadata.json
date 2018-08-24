@@ -1,5 +1,17 @@
-{"properties": [{
-  "name": "controller.planeta.mapping",
-  "type": "java.lang.String",
-  "description": "Mapeamento pro controller PlanetaController"
-}]}
+{"properties": [
+  {
+    "name": "controller.planeta.mapping",
+    "type": "java.lang.String",
+    "description": "Mapeamento pro controller PlanetaController"
+  },
+  {
+    "name": "rest.default.user-agent",
+    "type": "java.lang.String",
+    "description": "Header user-agent padrão."
+  },
+  {
+    "name": "rest.swapi.uri",
+    "type": "java.lang.String",
+    "description": "Endpoint de acesso a API do stars wars."
+  }
+]}
