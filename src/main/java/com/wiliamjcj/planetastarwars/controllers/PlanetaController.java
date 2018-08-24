@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -95,6 +96,31 @@ public class PlanetaController {
 				return ResponseEntity.ok(apiResponse);
 			} else {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			log.debug(e.getStackTrace().toString());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@ApiOperation(value = "Remove um planeta pelo id.")
+	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<APIResponse<PlanetaDTO>> deletarPlaneta(
+			@PathVariable(name = "id", required = true) String id) {
+		try {
+			APIResponse<PlanetaDTO> apiResponse = new APIResponse<PlanetaDTO>();
+
+			PlanetaDTO planeta = planetaService.buscarPlanetaPorId(id);
+
+			if (null != planeta.getId()) {
+				apiResponse.setData(planeta);
+				planetaService.deletarPlaneta(planeta);
+				return ResponseEntity.ok(apiResponse);
+			} else {
+				apiResponse.getErrors()
+						.add("Não foi possível remover o planeta, pois não foi encontrado planeta com o id: " + id);
+				return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(apiResponse);
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());

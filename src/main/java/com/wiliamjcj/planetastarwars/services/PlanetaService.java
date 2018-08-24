@@ -103,4 +103,9 @@ public class PlanetaService {
 		else
 			return new PlanetaDTO();
 	}
+	
+	public void deletarPlaneta(PlanetaDTO dto) {
+		Planeta planeta = (Planeta) mapper.map(dto, Planeta.class);
+		planetaRepository.delete(planeta);
+	}
 }
