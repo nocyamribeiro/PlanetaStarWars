@@ -1,9 +1,12 @@
 package com.wiliamjcj.planetastarwars.services;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,5 +75,23 @@ public class PlanetaService {
 			log.debug(e.getStackTrace().toString());
 			return 0;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<PlanetaDTO> buscarPlanetas() {
+		List<Planeta> planetas = planetaRepository.findAll();
+		Type tipo = new TypeToken<List<PlanetaDTO>>() {
+		}.getType();
+		List<PlanetaDTO> planetasDTO = (List<PlanetaDTO>) mapper.map(planetas, tipo);
+		return planetasDTO;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<PlanetaDTO> buscarPlanetas(String nome) {
+		List<Planeta> planetas = planetaRepository.findByNomeContainingIgnoreCase(nome);
+		Type tipo = new TypeToken<List<PlanetaDTO>>() {
+		}.getType();
+		List<PlanetaDTO> planetasDTO = (List<PlanetaDTO>) mapper.map(planetas, tipo);
+		return planetasDTO;
 	}
 }

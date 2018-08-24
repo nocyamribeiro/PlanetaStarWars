@@ -1,6 +1,7 @@
 package com.wiliamjcj.planetastarwars.controllers;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -11,10 +12,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wiliamjcj.planetastarwars.dto.PlanetaDTO;
@@ -54,6 +58,26 @@ public class PlanetaController {
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			log.debug(e.getStackTrace().toString());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@ApiOperation(value = "Lista todos os planetas, podendo buscar por nome ao informar o parâmetro \"nome\".")
+	@GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<APIResponse<List<PlanetaDTO>>> listar(
+			@RequestParam(value = "nome", required = false) String nome) {
+		List<PlanetaDTO> planetas = null;
+		try {
+			if (StringUtils.isEmpty(nome)) {
+				planetas = planetaService.buscarPlanetas();
+			} else {
+				planetas = planetaService.buscarPlanetas(nome);
+			}
+
+			APIResponse<List<PlanetaDTO>> apiResponse = new APIResponse<List<PlanetaDTO>>();
+			apiResponse.setData(planetas);
+			return ResponseEntity.ok(apiResponse);
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
