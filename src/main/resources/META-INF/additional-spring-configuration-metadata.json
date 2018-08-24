@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "controller.planeta.mapping",
+  "type": "java.lang.String",
+  "description": "Mapeamento pro controller PlanetaController"
+}]}
